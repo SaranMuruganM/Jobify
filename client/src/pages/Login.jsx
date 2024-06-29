@@ -44,8 +44,8 @@ const Login = () => {
       <Form method="post" className="form">
         <Logo />
         <h4>Login</h4>
-        <FormRow type="email" name="email" defaultValue="msaran913@gmail.com" />
-        <FormRow type="password" name="password" defaultValue="saran123" />
+        <FormRow type="email" name="email" />
+        <FormRow type="password" name="password" />
         <SubmitBtn />
         <button type="button" className="btn btn-block" onClick={testUser}>
           explore the app
