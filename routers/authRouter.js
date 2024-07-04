@@ -5,8 +5,15 @@ import {
   validateRegisterInput,
   validateLoginInput,
 } from "../middleware/validationMiddleware.js";
+import { rateLimit } from "express-rate-limit";
 
-router.post("/login", validateLoginInput, login);
-router.post("/register", validateRegisterInput, register);
+const requestLimit = rateLimit({
+  windowMs: 30000,
+  max: 1,
+  message: { msg: "limit exceeded try again in 30 seconds" },
+});
+
+router.post("/login", requestLimit, validateLoginInput, login);
+router.post("/register", requestLimit, validateRegisterInput, register);
 router.get("/logout", logout);
 export default router;

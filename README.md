@@ -6603,6 +6603,7 @@ const allJobsQuery = (params) => {
       sort ?? "newest",
       page ?? 1,
     ],
+
     queryFn: async () => {
       const { data } = await customFetch.get("/jobs", {
         params,

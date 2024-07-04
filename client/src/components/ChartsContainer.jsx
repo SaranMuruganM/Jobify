@@ -11,7 +11,6 @@ const ChartsContainer = ({ data }) => {
       <button type="button" onClick={() => setBarChart(!isBarChart)}>
         {isBarChart ? "Area Chart" : "Bar Chart"}
       </button>
-      {console.log({ data })}
       {isBarChart ? <BarChart data={data} /> : <AreaChart data={data} />}
     </Wrapper>
   );

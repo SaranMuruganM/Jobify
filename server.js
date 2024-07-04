@@ -9,6 +9,8 @@ import { dirname } from "path";
 import { fileURLToPath } from "url";
 import path from "path";
 import cloudinary from "cloudinary";
+import helmet from "helmet";
+import ExpressMongoSanitize from "express-mongo-sanitize";
 //Routers
 import jobRouter from "./routers/jobRouters.js";
 import authRouter from "./routers/authRouter.js";
@@ -23,7 +25,8 @@ if (process.env.NODE_ENV === "development") {
 }
 app.use(cookieParser());
 app.use(express.json());
-
+app.use(helmet());
+app.use(ExpressMongoSanitize());
 app.use("/api/v1/jobs", authenticateUser, jobRouter);
 app.use("/api/v1/users", authenticateUser, userRouter);
 app.use("/api/v1/auth", authRouter);

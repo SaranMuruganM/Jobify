@@ -1,23 +1,41 @@
 import React, { createContext, useContext, useState } from "react";
 import Wrapper from "../assets/wrappers/Dashboard";
-import { Outlet, useLoaderData, redirect, useNavigate } from "react-router-dom";
-import { SmallSidebar, BigSidebar, NavBar } from "../components";
+import {
+  Outlet,
+  useLoaderData,
+  redirect,
+  useNavigate,
+  useNavigation,
+} from "react-router-dom";
+import { SmallSidebar, BigSidebar, NavBar, Loader } from "../components";
 import customFetch from "../utils/customFetch";
 import { toast } from "react-toastify";
+import { useQuery } from "@tanstack/react-query";
+
 const DashboardContext = createContext();
-export const loader = async () => {
+
+const userQuery = {
+  queryKey: ["user"],
+  queryFn: async () => {
+    const response = await customFetch.get("/users/current-user");
+    return response.data;
+  },
+};
+
+export const loader = (queryClient) => async () => {
   try {
-    const { data } = await customFetch.get("/users/current-user");
-    return data;
+    return queryClient.ensureQueryData(userQuery);
   } catch (error) {
     return redirect("/");
   }
 };
 
-const DashboardLayout = () => {
+const DashboardLayout = (queryClient) => {
   //temp
-  const { user } = useLoaderData();
+  const { user } = useQuery(userQuery)?.data;
   const navigate = useNavigate();
+  const navigation = useNavigation();
+  const isPageLoading = navigation.state === "loading";
 
   const [showSidebar, setShowSidebar] = useState(false);
   const [isDarktheme, setisDarktheme] = useState(false);
@@ -35,6 +53,7 @@ const DashboardLayout = () => {
   const logoutUser = async () => {
     navigate("/");
     await customFetch.get("/auth/logout");
+    queryClient.invalidateQueries(["user"]);
     toast.success("Logging out...");
   };
 
@@ -56,7 +75,7 @@ const DashboardLayout = () => {
           <div>
             <NavBar />
             <div className="dashboard-page">
-              <Outlet context={{ user }} />
+              {isPageLoading ? <Loader /> : <Outlet context={{ user }} />}
             </div>
           </div>
         </main>
